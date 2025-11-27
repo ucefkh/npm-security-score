@@ -113,6 +113,62 @@ describe('ScoreCalculator', () => {
       expect(result.score).toBe(100); // No deduction on error
       expect(result.ruleResults[0].riskLevel).toBe('error');
     });
+
+    it('should add bonus points to score', async () => {
+      const calculatorWithHigherMax = new ScoreCalculator({ baseScore: 100, maxScore: 150 });
+      const bonusRule = {
+        name: 'bonus-rule',
+        evaluate: jest.fn().mockResolvedValue({ bonus: 10 }),
+      };
+
+      calculatorWithHigherMax.registerRule(bonusRule);
+      const result = await calculatorWithHigherMax.calculateScore({
+        name: 'test-package',
+        version: '1.0.0',
+      });
+
+      expect(result.score).toBe(110); // 100 + 10
+      expect(result.ruleResults[0].bonus).toBe(10);
+    });
+
+    it('should handle both deductions and bonuses', async () => {
+      const calculatorWithHigherMax = new ScoreCalculator({ baseScore: 100, maxScore: 150 });
+      const deductionRule = {
+        name: 'deduction-rule',
+        evaluate: jest.fn().mockResolvedValue({ deduction: 5 }),
+      };
+      const bonusRule = {
+        name: 'bonus-rule',
+        evaluate: jest.fn().mockResolvedValue({ bonus: 10 }),
+      };
+
+      calculatorWithHigherMax.registerRule(deductionRule);
+      calculatorWithHigherMax.registerRule(bonusRule);
+      const result = await calculatorWithHigherMax.calculateScore({
+        name: 'test-package',
+        version: '1.0.0',
+      });
+
+      expect(result.score).toBe(105); // 100 - 5 + 10
+      expect(result.ruleResults[0].deduction).toBe(5);
+      expect(result.ruleResults[1].bonus).toBe(10);
+    });
+
+    it('should not exceed maxScore with bonuses', async () => {
+      const calculator = new ScoreCalculator({ baseScore: 100, maxScore: 100 });
+      const bonusRule = {
+        name: 'big-bonus',
+        evaluate: jest.fn().mockResolvedValue({ bonus: 50 }),
+      };
+
+      calculator.registerRule(bonusRule);
+      const result = await calculator.calculateScore({
+        name: 'test-package',
+        version: '1.0.0',
+      });
+
+      expect(result.score).toBe(100); // Capped at maxScore
+    });
   });
 });
 

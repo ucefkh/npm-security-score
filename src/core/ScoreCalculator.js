@@ -43,10 +43,14 @@ class ScoreCalculator {
     for (const rule of rules) {
       try {
         const result = await rule.evaluate(packageData);
+        // Handle deductions (negative impact)
         score -= result.deduction || 0;
+        // Handle bonuses (positive impact)
+        score += result.bonus || 0;
         ruleResults.push({
           ruleName: rule.name,
           deduction: result.deduction || 0,
+          bonus: result.bonus || 0,
           details: result.details || {},
           riskLevel: result.riskLevel || 'none',
         });
@@ -57,6 +61,7 @@ class ScoreCalculator {
         ruleResults.push({
           ruleName: rule.name,
           deduction: 0,
+          bonus: 0,
           details: { error: error.message },
           riskLevel: 'error',
         });

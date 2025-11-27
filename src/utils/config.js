@@ -41,6 +41,19 @@ const DEFAULT_CONFIG = {
       enabled: true,
       weight: 5,
     },
+    // Bonus rules
+    verifiedPublisher: {
+      enabled: true,
+      bonus: 10,
+    },
+    signedReleases: {
+      enabled: true,
+      bonus: 10,
+    },
+    sbomDetection: {
+      enabled: true,
+      bonus: 10,
+    },
   },
   api: {
     npm: {

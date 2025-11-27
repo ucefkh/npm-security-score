@@ -209,6 +209,118 @@ class GitHubClient {
   hasRateLimit() {
     return this.rateLimitRemaining === null || this.rateLimitRemaining > 0;
   }
+
+  /**
+   * Get repository commits
+   * @param {string} owner - Repository owner
+   * @param {string} repo - Repository name
+   * @param {Object} options - Query options (since, until, per_page, page)
+   * @returns {Promise<Array>} Array of commits
+   */
+  async getCommits(owner, repo, options = {}) {
+    if (!owner || !repo) {
+      throw new Error('Owner and repo are required');
+    }
+
+    const queryParams = [];
+    if (options.since) {
+      queryParams.push(`since=${encodeURIComponent(options.since)}`);
+    }
+    if (options.until) {
+      queryParams.push(`until=${encodeURIComponent(options.until)}`);
+    }
+    if (options.per_page) {
+      queryParams.push(`per_page=${options.per_page}`);
+    }
+    if (options.page) {
+      queryParams.push(`page=${options.page}`);
+    }
+
+    const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+
+    try {
+      return await this._request(`/repos/${owner}/${repo}/commits${queryString}`);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        return [];
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Get repository issues
+   * @param {string} owner - Repository owner
+   * @param {string} repo - Repository name
+   * @param {Object} options - Query options (state, per_page, page)
+   * @returns {Promise<Array>} Array of issues
+   */
+  async getIssues(owner, repo, options = {}) {
+    if (!owner || !repo) {
+      throw new Error('Owner and repo are required');
+    }
+
+    const queryParams = [];
+    if (options.state) {
+      queryParams.push(`state=${options.state}`);
+    } else {
+      queryParams.push('state=all'); // Default to all states
+    }
+    if (options.per_page) {
+      queryParams.push(`per_page=${options.per_page}`);
+    }
+    if (options.page) {
+      queryParams.push(`page=${options.page}`);
+    }
+
+    const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '?state=all';
+
+    try {
+      return await this._request(`/repos/${owner}/${repo}/issues${queryString}`);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        return [];
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Get repository pull requests
+   * @param {string} owner - Repository owner
+   * @param {string} repo - Repository name
+   * @param {Object} options - Query options (state, per_page, page)
+   * @returns {Promise<Array>} Array of pull requests
+   */
+  async getPullRequests(owner, repo, options = {}) {
+    if (!owner || !repo) {
+      throw new Error('Owner and repo are required');
+    }
+
+    const queryParams = [];
+    if (options.state) {
+      queryParams.push(`state=${options.state}`);
+    } else {
+      queryParams.push('state=all'); // Default to all states
+    }
+    if (options.per_page) {
+      queryParams.push(`per_page=${options.per_page}`);
+    }
+    if (options.page) {
+      queryParams.push(`page=${options.page}`);
+    }
+
+    const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '?state=all';
+
+    try {
+      return await this._request(`/repos/${owner}/${repo}/pulls${queryString}`);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        return [];
+      }
+      throw error;
+    }
+  }
 }
 
 module.exports = GitHubClient;

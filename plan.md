@@ -188,78 +188,78 @@ Provide developers with a quantifiable, transparent security score (0–100) for
   - [x] Performance testing
 
 #### Task 2.5: Advisory History Analysis
-- [ ] **2.5.1** Advisory database integration
-  - [ ] npm advisory API integration
-  - [ ] GitHub Security Advisory API
-  - [ ] CVE database integration
-  - [ ] Create unified advisory interface
-- [ ] **2.5.2** Advisory analysis
-  - [ ] Fetch package advisories
-  - [ ] Classify advisory severity
-  - [ ] Detect malware history
-  - [ ] Calculate risk from history
-- [ ] **2.5.3** Risk scoring
-  - [ ] Apply weight based on advisory severity
-  - [ ] Apply weight (-15 points) for critical issues
-  - [ ] Generate advisory report
-- [ ] **2.5.4** Caching and updates
-  - [ ] Cache advisory data
-  - [ ] Implement update mechanism
-  - [ ] Handle API failures gracefully
+- [x] **2.5.1** Advisory database integration
+  - [x] npm advisory API integration
+  - [x] GitHub Security Advisory API
+  - [x] CVE database integration (structure in place)
+  - [x] Create unified advisory interface
+- [x] **2.5.2** Advisory analysis
+  - [x] Fetch package advisories
+  - [x] Classify advisory severity
+  - [x] Detect malware history
+  - [x] Calculate risk from history
+- [x] **2.5.3** Risk scoring
+  - [x] Apply weight based on advisory severity
+  - [x] Apply weight (-15 points) for critical issues
+  - [x] Generate advisory report
+- [x] **2.5.4** Caching and updates
+  - [x] Cache advisory data
+  - [x] Implement update mechanism
+  - [x] Handle API failures gracefully
 
 #### Task 2.6: Update Behavior Analysis
-- [ ] **2.6.1** Version history analysis
-  - [ ] Fetch version history
-  - [ ] Compare package versions
-  - [ ] Detect size spikes
-  - [ ] Detect script changes
-- [ ] **2.6.2** Suspicious update detection
-  - [ ] Flag sudden size increases
-  - [ ] Detect new suspicious scripts
-  - [ ] Identify unusual version jumps
-- [ ] **2.6.3** Risk scoring
-  - [ ] Calculate update risk
-  - [ ] Apply weight (-10 points)
-  - [ ] Generate change report
-- [ ] **2.6.4** Testing
-  - [ ] Test with various update patterns
-  - [ ] Test edge cases
-  - [ ] Performance optimization
+- [x] **2.6.1** Version history analysis
+  - [x] Fetch version history
+  - [x] Compare package versions
+  - [x] Detect size spikes
+  - [x] Detect script changes
+- [x] **2.6.2** Suspicious update detection
+  - [x] Flag sudden size increases
+  - [x] Detect new suspicious scripts
+  - [x] Identify unusual version jumps
+- [x] **2.6.3** Risk scoring
+  - [x] Calculate update risk
+  - [x] Apply weight (-10 points)
+  - [x] Generate change report
+- [x] **2.6.4** Testing
+  - [x] Test with various update patterns
+  - [x] Test edge cases
+  - [x] Performance optimization
 
 #### Task 2.7: Community Signals Analysis
-- [ ] **2.7.1** Repository activity checks
-  - [ ] Check commit frequency
-  - [ ] Detect inactive repositories
-  - [ ] Check issue/PR activity
-  - [ ] Verify repository health
-- [ ] **2.7.2** Security policy detection
-  - [ ] Check for SECURITY.md
-  - [ ] Verify security reporting process
-  - [ ] Check for responsible disclosure
-- [ ] **2.7.3** Risk scoring
-  - [ ] Calculate community risk
-  - [ ] Apply weight (-5 points)
-  - [ ] Generate community report
-- [ ] **2.7.4** Testing
-  - [ ] Test with various repository states
-  - [ ] Mock GitHub API responses
+- [x] **2.7.1** Repository activity checks
+  - [x] Check commit frequency
+  - [x] Detect inactive repositories
+  - [x] Check issue/PR activity
+  - [x] Verify repository health
+- [x] **2.7.2** Security policy detection
+  - [x] Check for SECURITY.md
+  - [x] Verify security reporting process
+  - [x] Check for responsible disclosure
+- [x] **2.7.3** Risk scoring
+  - [x] Calculate community risk
+  - [x] Apply weight (-5 points)
+  - [x] Generate community report
+- [x] **2.7.4** Testing
+  - [x] Test with various repository states
+  - [x] Mock GitHub API responses
 
 #### Task 2.8: Bonus Points System
-- [ ] **2.8.1** Verified publisher detection
-  - [ ] Check npm verified publisher status
-  - [ ] Verify publisher identity
-  - [ ] Apply bonus (+10 points)
-- [ ] **2.8.2** Signed releases detection
-  - [ ] Check for package signatures
-  - [ ] Verify signature validity
-  - [ ] Apply bonus (+10 points)
-- [ ] **2.8.3** SBOM (Software Bill of Materials) detection
-  - [ ] Check for SBOM files
-  - [ ] Verify SBOM format
-  - [ ] Apply bonus (+10 points)
-- [ ] **2.8.4** Testing
-  - [ ] Test bonus point calculation
-  - [ ] Test edge cases
+- [x] **2.8.1** Verified publisher detection
+  - [x] Check npm verified publisher status
+  - [x] Verify publisher identity
+  - [x] Apply bonus (+10 points)
+- [x] **2.8.2** Signed releases detection
+  - [x] Check for package signatures
+  - [x] Verify signature validity (structure in place)
+  - [x] Apply bonus (+10 points)
+- [x] **2.8.3** SBOM (Software Bill of Materials) detection
+  - [x] Check for SBOM files
+  - [x] Verify SBOM format
+  - [x] Apply bonus (+10 points)
+- [x] **2.8.4** Testing
+  - [x] Test bonus point calculation
+  - [x] Test edge cases
 
 ---
 
@@ -267,31 +267,31 @@ Provide developers with a quantifiable, transparent security score (0–100) for
 **Goal**: Create user-friendly CLI tool and output formats
 
 #### Task 3.1: CLI Implementation
-- [ ] **3.1.1** CLI framework setup
-  - [ ] Choose CLI framework (Commander.js, yargs, etc.)
-  - [ ] Set up command structure
-  - [ ] Implement argument parsing
-  - [ ] Add help system
-- [ ] **3.1.2** Core CLI commands
-  - [ ] `score <package>` - Score single package
-  - [ ] `score <package>@<version>` - Score specific version
-  - [ ] `batch <file>` - Score multiple packages
-  - [ ] `compare <pkg1> <pkg2>` - Compare packages
-- [ ] **3.1.3** CLI options and flags
-  - [ ] `--json` - JSON output format
-  - [ ] `--verbose` - Detailed output
-  - [ ] `--fail-below <score>` - CI/CD mode
-  - [ ] `--config <file>` - Custom config
-  - [ ] `--output <file>` - Save report
-- [ ] **3.1.4** Output formatting
-  - [ ] Human-readable terminal output
-  - [ ] Color-coded scores
-  - [ ] Progress indicators
-  - [ ] Error messages
-- [ ] **3.1.5** Testing
-  - [ ] CLI unit tests
-  - [ ] Integration tests
-  - [ ] Manual testing scenarios
+- [x] **3.1.1** CLI framework setup
+  - [x] Choose CLI framework (Commander.js, yargs, etc.)
+  - [x] Set up command structure
+  - [x] Implement argument parsing
+  - [x] Add help system
+- [x] **3.1.2** Core CLI commands
+  - [x] `score <package>` - Score single package
+  - [x] `score <package>@<version>` - Score specific version
+  - [x] `batch <file>` - Score multiple packages
+  - [x] `compare <pkg1> <pkg2>` - Compare packages
+- [x] **3.1.3** CLI options and flags
+  - [x] `--json` - JSON output format
+  - [x] `--verbose` - Detailed output
+  - [x] `--fail-below <score>` - CI/CD mode
+  - [x] `--config <file>` - Custom config
+  - [x] `--output <file>` - Save report
+- [x] **3.1.4** Output formatting
+  - [x] Human-readable terminal output
+  - [x] Color-coded scores
+  - [x] Progress indicators
+  - [x] Error messages
+- [x] **3.1.5** Testing
+  - [x] CLI unit tests
+  - [x] Integration tests
+  - [x] Manual testing scenarios
 
 #### Task 3.2: Report Generation
 - [ ] **3.2.1** JSON report format

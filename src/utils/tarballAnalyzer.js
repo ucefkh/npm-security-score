@@ -7,7 +7,8 @@ const https = require('https');
 const http = require('http');
 const gunzip = require('gunzip-maybe');
 const tar = require('tar-stream');
-const { createWriteStream, createReadStream, mkdir, rm } = require('fs').promises;
+const { mkdir, rm } = require('fs').promises;
+const { createWriteStream, createReadStream } = require('fs');
 const path = require('path');
 const os = require('os');
 
@@ -127,7 +128,6 @@ class TarballAnalyzer {
           stream.resume();
           next();
         } else if (header.type === 'file') {
-          const { createWriteStream } = require('fs');
           const writeStream = createWriteStream(filePath);
           stream.pipe(writeStream);
           writeStream.on('finish', next);
