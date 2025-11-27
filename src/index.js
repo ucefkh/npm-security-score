@@ -11,7 +11,9 @@ const { getScoreBand, shouldBlock, getScoreInterpretation } = require('./core/sc
 // Security Rules
 const LifecycleScriptRiskRule = require('./rules/LifecycleScriptRiskRule');
 const ExternalNetworkCallRule = require('./rules/ExternalNetworkCallRule');
+const MaintainerSecurityRule = require('./rules/MaintainerSecurityRule');
 const NpmRegistryClient = require('./api/NpmRegistryClient');
+const GitHubClient = require('./api/GitHubClient');
 const PackageAnalyzer = require('./utils/packageAnalyzer');
 const TarballAnalyzer = require('./utils/tarballAnalyzer');
 const config = require('./utils/config');
@@ -28,6 +30,7 @@ module.exports = {
   },
   // API clients
   NpmRegistryClient,
+  GitHubClient,
   // Utilities
   PackageAnalyzer,
   TarballAnalyzer,
@@ -35,6 +38,7 @@ module.exports = {
   // Security Rules
   LifecycleScriptRiskRule,
   ExternalNetworkCallRule,
+  MaintainerSecurityRule,
   // Version
   version: require('../package.json').version,
 };
