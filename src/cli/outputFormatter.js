@@ -4,12 +4,15 @@
 
 const fs = require('fs').promises;
 const path = require('path');
+const MarkdownFormatter = require('./markdownFormatter');
 
 class OutputFormatter {
   constructor(options = {}) {
     this.json = options.json || false;
+    this.markdown = options.markdown || false;
     this.verbose = options.verbose || false;
     this._colorsEnabled = this.detectColors(options.colors);
+    this.markdownFormatter = new MarkdownFormatter();
   }
 
   /**
@@ -69,6 +72,9 @@ class OutputFormatter {
     if (this.json) {
       return this.formatJSON(result);
     }
+    if (this.markdown) {
+      return this.markdownFormatter.format(result);
+    }
     return this.formatHumanReadable(result);
   }
 
@@ -81,15 +87,250 @@ class OutputFormatter {
     if (this.json) {
       return this.formatJSON(results);
     }
+    if (this.markdown) {
+      return this.formatMarkdownMultiple(results);
+    }
     return this.formatHumanReadableMultiple(results);
   }
 
   /**
-   * Format as JSON
+   * Format as JSON with schema and metadata
    * @private
    */
   formatJSON(data) {
+    // If it's a single result, wrap it with metadata
+    if (data && data.score !== undefined) {
+      return JSON.stringify(this._enrichWithMetadata(data), null, 2);
+    }
+    // If it's an array, enrich each item
+    if (Array.isArray(data)) {
+      const enriched = data.map((item) => {
+        if (item.result) {
+          return {
+            ...item,
+            result: this._enrichWithMetadata(item.result),
+          };
+        }
+        return item;
+      });
+      return JSON.stringify(enriched, null, 2);
+    }
     return JSON.stringify(data, null, 2);
+  }
+
+  /**
+   * Enrich result with metadata and schema
+   * @private
+   */
+  _enrichWithMetadata(result) {
+    return {
+      $schema: 'https://npm-security-score.schema.json',
+      version: require('../../package.json').version,
+      timestamp: result.timestamp || new Date().toISOString(),
+      package: {
+        name: result.packageName,
+        version: result.packageVersion,
+      },
+      score: {
+        value: result.score,
+        band: result.band?.key || result.band?.label || 'UNKNOWN',
+        bandLabel: result.band?.label || 'Unknown',
+        bandDescription: result.band?.description || '',
+        interpretation: this._getScoreInterpretation(result.score),
+      },
+      rules: this._formatRulesForJSON(result.ruleResults || []),
+      summary: this._generateSummary(result),
+      recommendations: this._generateRecommendations(result),
+      metadata: {
+        generatedAt: new Date().toISOString(),
+        tool: 'npm-security-score',
+        toolVersion: require('../../package.json').version,
+      },
+    };
+  }
+
+  /**
+   * Format rules for JSON output
+   * @private
+   */
+  _formatRulesForJSON(ruleResults) {
+    return ruleResults.map((rule) => ({
+      name: rule.ruleName,
+      deduction: rule.deduction,
+      riskLevel: rule.riskLevel,
+      details: rule.details,
+      enabled: true,
+    }));
+  }
+
+  /**
+   * Generate executive summary
+   * @private
+   */
+  _generateSummary(result) {
+    const totalDeductions = (result.ruleResults || []).reduce(
+      (sum, rule) => sum + (rule.deduction || 0),
+      0
+    );
+    const totalBonuses = (result.ruleResults || []).reduce(
+      (sum, rule) => sum + (Math.max(0, rule.deduction) || 0),
+      0
+    );
+    const issuesFound = (result.ruleResults || []).filter(
+      (rule) => rule.deduction > 0
+    ).length;
+
+    return {
+      finalScore: result.score,
+      baseScore: 100,
+      totalDeductions,
+      totalBonuses,
+      issuesFound,
+      rulesEvaluated: result.ruleResults?.length || 0,
+      riskLevel: result.band.key,
+      isSafe: result.score >= 90,
+      requiresReview: result.score >= 70 && result.score < 90,
+      isHighRisk: result.score >= 50 && result.score < 70,
+      shouldBlock: result.score < 50,
+    };
+  }
+
+  /**
+   * Generate recommendations
+   * @private
+   */
+  _generateRecommendations(result) {
+    const recommendations = [];
+
+    if (result.score < 50) {
+      recommendations.push({
+        priority: 'critical',
+        action: 'block',
+        message: 'Package should be blocked in CI/CD. Significant security concerns detected.',
+      });
+    } else if (result.score < 70) {
+      recommendations.push({
+        priority: 'high',
+        action: 'review',
+        message: 'Thorough security review recommended before use.',
+      });
+    } else if (result.score < 90) {
+      recommendations.push({
+        priority: 'medium',
+        action: 'review',
+        message: 'Review recommended. Some security concerns detected.',
+      });
+    }
+
+    // Rule-specific recommendations
+    (result.ruleResults || []).forEach((rule) => {
+      if (rule.deduction > 0) {
+        const rec = this._getRuleRecommendation(rule);
+        if (rec) {
+          recommendations.push(rec);
+        }
+      }
+    });
+
+    return recommendations;
+  }
+
+  /**
+   * Get recommendation for a specific rule
+   * @private
+   */
+  _getRuleRecommendation(rule) {
+    const recommendations = {
+      'lifecycle-script-risk': {
+        priority: 'high',
+        action: 'review',
+        message: 'Review lifecycle scripts for suspicious commands. Consider removing or replacing risky scripts.',
+        remediation: [
+          'Review all preinstall/postinstall scripts',
+          'Remove any scripts that download or execute remote code',
+          'Verify script contents match expected behavior',
+        ],
+      },
+      'external-network-call': {
+        priority: 'high',
+        action: 'review',
+        message: 'Package makes external network calls. Verify these are legitimate and secure.',
+        remediation: [
+          'Review network call destinations',
+          'Ensure HTTPS is used for all connections',
+          'Verify network calls are necessary and secure',
+        ],
+      },
+      'maintainer-security': {
+        priority: 'medium',
+        action: 'review',
+        message: 'Review maintainer security practices. Consider contacting maintainers about security improvements.',
+        remediation: [
+          'Check repository security policy',
+          'Verify maintainer account security',
+          'Consider contributing security improvements',
+        ],
+      },
+      'code-obfuscation': {
+        priority: 'medium',
+        action: 'review',
+        message: 'Package contains obfuscated or minified code. Review source code if available.',
+        remediation: [
+          'Request source code access',
+          'Review minified code for suspicious patterns',
+          'Consider alternatives if source is unavailable',
+        ],
+      },
+      'advisory-history': {
+        priority: 'high',
+        action: 'update',
+        message: 'Package has security advisories. Update to patched version if available.',
+        remediation: [
+          'Check for updated versions',
+          'Review advisory details',
+          'Apply security patches',
+        ],
+      },
+      'update-behavior': {
+        priority: 'medium',
+        action: 'review',
+        message: 'Suspicious update patterns detected. Review recent changes carefully.',
+        remediation: [
+          'Review recent version changes',
+          'Check changelog for suspicious updates',
+          'Verify update authenticity',
+        ],
+      },
+      'community-signals': {
+        priority: 'low',
+        action: 'monitor',
+        message: 'Repository shows low activity. Monitor for updates and security improvements.',
+        remediation: [
+          'Monitor repository activity',
+          'Check for security policy updates',
+          'Consider contributing to improve security',
+        ],
+      },
+    };
+
+    return recommendations[rule.ruleName] || null;
+  }
+
+  /**
+   * Get score interpretation
+   * @private
+   */
+  _getScoreInterpretation(score) {
+    if (score >= 90) {
+      return 'Package appears safe to use with minimal security concerns.';
+    }
+    if (score >= 70) {
+      return 'Package is generally safe but review recommended for production use.';
+    }
+    if (score >= 50) {
+      return 'Package has significant security concerns. Thorough review required.';
+    }
+    return 'Package has critical security issues. Block in CI/CD and avoid use.';
   }
 
   /**
@@ -367,6 +608,50 @@ class OutputFormatter {
   }
 
   /**
+   * Format multiple results as Markdown
+   * @private
+   */
+  formatMarkdownMultiple(results) {
+    const lines = [];
+    lines.push('# Batch Security Score Report');
+    lines.push('');
+    lines.push(`**Generated:** ${new Date().toISOString()}`);
+    lines.push(`**Total Packages:** ${results.length}`);
+    lines.push('');
+
+    results.forEach((item, index) => {
+      if (item.success) {
+        lines.push(`## ${index + 1}. ${item.result.packageName}@${item.result.packageVersion}`);
+        lines.push('');
+        lines.push(this.markdownFormatter._formatSummary(item.result));
+        lines.push('');
+      } else {
+        lines.push(`## ${index + 1}. ${item.package}@${item.version || 'unknown'}`);
+        lines.push('');
+        lines.push(`❌ **Error:** ${item.error}`);
+        lines.push('');
+      }
+    });
+
+    // Summary
+    const successful = results.filter((r) => r.success);
+    if (successful.length > 0) {
+      const avgScore =
+        successful.reduce((sum, r) => sum + r.result.score, 0) /
+        successful.length;
+      lines.push('## Summary');
+      lines.push('');
+      lines.push(`- **Total:** ${results.length}`);
+      lines.push(`- **Successful:** ${successful.length}`);
+      lines.push(`- **Failed:** ${results.length - successful.length}`);
+      lines.push(`- **Average Score:** ${avgScore.toFixed(2)}/100`);
+      lines.push('');
+    }
+
+    return lines.join('\n');
+  }
+
+  /**
    * Write output to file
    * @param {string} filePath - Path to output file
    * @param {string|Object} content - Content to write
@@ -374,8 +659,26 @@ class OutputFormatter {
    */
   async writeToFile(filePath, content) {
     const fullPath = path.resolve(filePath);
-    const output =
-      typeof content === 'string' ? content : this.formatJSON(content);
+    let output;
+
+    // Determine format based on file extension
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === '.md' || ext === '.markdown') {
+      // Markdown format
+      if (content && content.score !== undefined) {
+        output = this.markdownFormatter.format(content);
+      } else if (Array.isArray(content)) {
+        output = this.formatMarkdownMultiple(content);
+      } else {
+        output = this.formatJSON(content);
+      }
+    } else if (ext === '.json') {
+      // JSON format
+      output = typeof content === 'string' ? content : this.formatJSON(content);
+    } else {
+      // Default to JSON
+      output = typeof content === 'string' ? content : this.formatJSON(content);
+    }
 
     await fs.writeFile(fullPath, output, 'utf-8');
   }

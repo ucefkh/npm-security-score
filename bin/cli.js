@@ -69,9 +69,10 @@ program
   .argument('<package>', 'Package name (optionally with version: package@version)')
   .option('-v, --verbose', 'Show detailed output', false)
   .option('-j, --json', 'Output as JSON', false)
+  .option('-m, --markdown', 'Output as Markdown', false)
   .option('--fail-below <score>', 'Exit with error if score is below threshold', parseFloat)
   .option('-c, --config <file>', 'Path to config file')
-  .option('-o, --output <file>', 'Save report to file')
+  .option('-o, --output <file>', 'Save report to file (format auto-detected from extension)')
   .action(async (pkg, options) => {
     try {
       // Load config if provided
@@ -89,6 +90,7 @@ program
       });
       const formatter = new OutputFormatter({
         json: options.json,
+        markdown: options.markdown,
         verbose: options.verbose,
       });
 
@@ -123,9 +125,10 @@ program
   .option('-f, --file <file>', 'Read packages from file (one per line)')
   .option('-v, --verbose', 'Show detailed output', false)
   .option('-j, --json', 'Output as JSON', false)
+  .option('-m, --markdown', 'Output as Markdown', false)
   .option('--fail-below <score>', 'Exit with error if any score is below threshold', parseFloat)
   .option('-c, --config <file>', 'Path to config file')
-  .option('-o, --output <file>', 'Save report to file')
+  .option('-o, --output <file>', 'Save report to file (format auto-detected from extension)')
   .action(async (packages, options) => {
     try {
       // Load config if provided
@@ -172,6 +175,7 @@ program
       });
       const formatter = new OutputFormatter({
         json: options.json,
+        markdown: options.markdown,
         verbose: options.verbose,
       });
 
@@ -223,8 +227,9 @@ program
   .argument('<package2>', 'Second package name (optionally with version)')
   .option('-v, --verbose', 'Show detailed output', false)
   .option('-j, --json', 'Output as JSON', false)
+  .option('-m, --markdown', 'Output as Markdown', false)
   .option('-c, --config <file>', 'Path to config file')
-  .option('-o, --output <file>', 'Save report to file')
+  .option('-o, --output <file>', 'Save report to file (format auto-detected from extension)')
   .action(async (pkg1, pkg2, options) => {
     try {
       // Load config if provided
@@ -247,6 +252,7 @@ program
       });
       const formatter = new OutputFormatter({
         json: options.json,
+        markdown: options.markdown,
         verbose: options.verbose,
       });
 
@@ -275,6 +281,112 @@ program
       await handleOutput(options.output, comparisonData, formatter);
 
       process.exit(0);
+    } catch (error) {
+      console.error(`\n❌ Error: ${error.message}`);
+      if (options.verbose) {
+        console.error(error.stack);
+      }
+      process.exit(1);
+    }
+  });
+
+// Interactive mode command
+program
+  .command('interactive')
+  .alias('i')
+  .description('Start interactive mode')
+  .option('-v, --verbose', 'Show detailed output', false)
+  .option('-c, --config <file>', 'Path to config file')
+  .action(async (options) => {
+    try {
+      // Load config if provided
+      await loadConfig(options.config);
+
+      const InteractiveMode = require('../src/cli/interactiveMode');
+      const interactive = new InteractiveMode({
+        config: config.getAll(),
+        verbose: options.verbose,
+      });
+
+      await interactive.start();
+    } catch (error) {
+      console.error(`\n❌ Error: ${error.message}`);
+      if (options.verbose) {
+        console.error(error.stack);
+      }
+      process.exit(1);
+    }
+  });
+
+// Watch mode command
+program
+  .command('watch')
+  .description('Watch a package for changes and auto-rescore')
+  .argument('<package>', 'Package name to watch')
+  .option('-i, --interval <seconds>', 'Check interval in seconds', '300')
+  .option('-v, --verbose', 'Show detailed output', false)
+  .option('-c, --config <file>', 'Path to config file')
+  .action(async (pkg, options) => {
+    try {
+      // Load config if provided
+      await loadConfig(options.config);
+
+      const [packageName, version] = pkg.includes('@') && !pkg.startsWith('@')
+        ? pkg.split('@')
+        : [pkg, null];
+
+      const interval = parseInt(options.interval, 10) * 1000; // Convert to milliseconds
+
+      console.log(`\n👀 Watching ${packageName}${version ? `@${version}` : ''}...`);
+      console.log(`   Checking every ${options.interval} seconds`);
+      console.log('   Press Ctrl+C to stop\n');
+
+      const ScoringService = require('../src/cli/scoringService');
+      const OutputFormatter = require('../src/cli/outputFormatter');
+      const scoringService = new ScoringService({
+        config: config.getAll(),
+        verbose: options.verbose,
+      });
+      const formatter = new OutputFormatter({
+        verbose: options.verbose,
+      });
+
+      let lastResult = null;
+
+      const checkPackage = async () => {
+        try {
+          const result = await scoringService.scorePackage(packageName, version);
+
+          // Check if score changed
+          if (lastResult && lastResult.score !== result.score) {
+            console.log(`\n📊 Score changed: ${lastResult.score} → ${result.score}`);
+            console.log(formatter.formatResult(result));
+            console.log('');
+          } else if (!lastResult) {
+            // First check
+            console.log('📊 Initial score:');
+            console.log(formatter.formatResult(result));
+            console.log('');
+          }
+
+          lastResult = result;
+        } catch (error) {
+          console.error(`\n❌ Error checking package: ${error.message}\n`);
+        }
+      };
+
+      // Initial check
+      await checkPackage();
+
+      // Set up interval
+      const intervalId = setInterval(checkPackage, interval);
+
+      // Handle graceful shutdown
+      process.on('SIGINT', () => {
+        console.log('\n\n👋 Stopping watch mode...\n');
+        clearInterval(intervalId);
+        process.exit(0);
+      });
     } catch (error) {
       console.error(`\n❌ Error: ${error.message}`);
       if (options.verbose) {

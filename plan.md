@@ -294,36 +294,36 @@ Provide developers with a quantifiable, transparent security score (0–100) for
   - [x] Manual testing scenarios
 
 #### Task 3.2: Report Generation
-- [ ] **3.2.1** JSON report format
-  - [ ] Define JSON schema
-  - [ ] Implement JSON serializer
-  - [ ] Include all risk details
-  - [ ] Add metadata (timestamp, version, etc.)
-- [ ] **3.2.2** Human-readable reports
-  - [ ] Terminal-friendly format
-  - [ ] Markdown report format
+- [x] **3.2.1** JSON report format
+  - [x] Define JSON schema
+  - [x] Implement JSON serializer
+  - [x] Include all risk details
+  - [x] Add metadata (timestamp, version, etc.)
+- [x] **3.2.2** Human-readable reports
+  - [x] Terminal-friendly format
+  - [x] Markdown report format
   - [ ] HTML report format (optional)
   - [ ] PDF report format (optional)
-- [ ] **3.2.3** Report sections
-  - [ ] Executive summary
-  - [ ] Detailed risk breakdown
-  - [ ] Recommendations
-  - [ ] Remediation steps
-- [ ] **3.2.4** Testing
-  - [ ] Test all report formats
-  - [ ] Validate JSON schema
-  - [ ] Test with various packages
+- [x] **3.2.3** Report sections
+  - [x] Executive summary
+  - [x] Detailed risk breakdown
+  - [x] Recommendations
+  - [x] Remediation steps
+- [x] **3.2.4** Testing
+  - [x] Test all report formats
+  - [x] Validate JSON schema
+  - [x] Test with various packages
 
 #### Task 3.3: Interactive Mode
-- [ ] **3.3.1** Interactive CLI
-  - [ ] Package search/selection
-  - [ ] Interactive scoring
-  - [ ] Real-time progress
-  - [ ] User prompts
-- [ ] **3.3.2** Watch mode
-  - [ ] Monitor package changes
-  - [ ] Auto-rescore on updates
-  - [ ] Notifications
+- [x] **3.3.1** Interactive CLI
+  - [x] Package search/selection
+  - [x] Interactive scoring
+  - [x] Real-time progress
+  - [x] User prompts
+- [x] **3.3.2** Watch mode
+  - [x] Monitor package changes
+  - [x] Auto-rescore on updates
+  - [x] Notifications
 - [ ] **3.3.3** Testing
   - [ ] Test interactive flows
   - [ ] Test watch mode

@@ -55,10 +55,15 @@ describe('OutputFormatter', () => {
 
     it('should format as JSON when json option is true', () => {
       formatter = new OutputFormatter({ json: true });
-      const output = formatter.formatResult(mockResult);
+      const resultWithBand = {
+        ...mockResult,
+        band: { key: 'REVIEW', label: 'Review Recommended', description: 'Review recommended', emoji: '⚠️' },
+      };
+      const output = formatter.formatResult(resultWithBand);
       expect(() => JSON.parse(output)).not.toThrow();
       const parsed = JSON.parse(output);
-      expect(parsed.score).toBe(85);
+      expect(parsed.score.value).toBe(85);
+      expect(parsed.package.name).toBe('test-package');
     });
 
     it('should format as human-readable when json option is false', () => {
@@ -161,7 +166,14 @@ describe('OutputFormatter', () => {
   describe('writeToFile', () => {
     it('should write JSON to file', async () => {
       formatter = new OutputFormatter({ json: true });
-      const data = { score: 85, package: 'test' };
+      const data = {
+        score: 85,
+        packageName: 'test',
+        packageVersion: '1.0.0',
+        band: { key: 'REVIEW', label: 'Review', description: 'Review recommended', emoji: '⚠️' },
+        ruleResults: [],
+        timestamp: new Date().toISOString(),
+      };
 
       await formatter.writeToFile('test.json', data);
 

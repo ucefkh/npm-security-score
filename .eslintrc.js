@@ -15,10 +15,12 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'no-console': 'warn',
+    'no-console': ['warn', { allow: ['log', 'warn', 'error'] }],
+    'no-constant-condition': ['error', { checkLoops: false }],
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'node/no-unsupported-features/es-syntax': 'off',
     'node/no-missing-import': 'off',
+    'node/no-missing-require': ['error', { allowModules: ['inquirer', 'ora'] }],
   },
 };
 
