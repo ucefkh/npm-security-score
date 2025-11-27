@@ -21,7 +21,7 @@ All Phase 1 tasks have been completed. The project now has:
 | Phase | Status | Progress |
 |-------|--------|----------|
 | Phase 1: Foundation | ✅ Complete | 100% |
-| Phase 2: Security Rules | 🚧 Ready | 0% |
+| Phase 2: Security Rules | 🚧 In Progress | 12.5% (1/8 tasks) |
 | Phase 3: CLI & UI | 📋 Planned | 0% |
 | Phase 4: CI/CD Integration | 📋 Planned | 0% |
 | Phase 5: Advanced Features | 📋 Planned | 0% |
@@ -30,6 +30,14 @@ All Phase 1 tasks have been completed. The project now has:
 | Phase 8: Publishing | 📋 Planned | 0% |
 
 ## ✅ What's Been Completed
+
+### Phase 2: Security Rules (In Progress)
+- ✅ **Task 2.1: Lifecycle Script Risk Detection** - Complete
+  - Detects suspicious commands (curl, wget, http, etc.)
+  - Detects obfuscation (base64, hex encoding)
+  - Detects high-risk patterns (curl|sh, wget|bash)
+  - Risk scoring with -30 point deduction
+  - 17 comprehensive tests
 
 ### Core Infrastructure
 - Repository structure and configuration
@@ -80,8 +88,9 @@ All Phase 2 tasks are ready for contribution:
 ## 📈 Statistics
 
 - **Total Tasks**: 50+
-- **Completed Tasks**: 11 (Phase 1)
-- **Tests**: 43 passing
+- **Completed Tasks**: 12 (Phase 1: 11, Phase 2: 1)
+- **Tests**: 60 passing (43 Phase 1 + 17 Phase 2)
+- **Security Rules**: 1 implemented (LifecycleScriptRiskRule)
 - **Code Coverage**: Configured
 - **Linting**: ✅ Passing
 - **CI/CD**: ✅ Configured
@@ -102,5 +111,5 @@ All Phase 2 tasks are ready for contribution:
 
 ---
 
-**Status**: Phase 1 Complete ✅ | Ready for Phase 2 🚀
+**Status**: Phase 1 Complete ✅ | Phase 2 In Progress (12.5%) 🚀
 

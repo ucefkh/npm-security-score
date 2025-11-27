@@ -30,12 +30,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/npm-security-score.git"
+    "url": "git@github.com:01tek/npm-security-score.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/npm-security-score/issues"
+    "url": "https://github.com/01tek/npm-security-score/issues"
   },
-  "homepage": "https://github.com/your-org/npm-security-score#readme",
+  "homepage": "https://github.com/01tek/npm-security-score#readme",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"

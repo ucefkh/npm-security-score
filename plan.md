@@ -99,26 +99,26 @@ Provide developers with a quantifiable, transparent security score (0–100) for
 **Goal**: Implement all security detection rules with comprehensive testing
 
 #### Task 2.1: Lifecycle Script Risk Detection
-- [ ] **2.1.1** External command detection
-  - [ ] Detect curl/wget/http calls in scripts
-  - [ ] Detect wget usage
-  - [ ] Detect other network tools (nc, telnet, etc.)
-  - [ ] Pattern matching for suspicious commands
-- [ ] **2.1.2** Script analysis engine
-  - [ ] Parse shell script syntax
-  - [ ] Detect command chaining
-  - [ ] Identify obfuscation attempts
-  - [ ] Flag base64 encoded commands
-- [ ] **2.1.3** Risk scoring for scripts
-  - [ ] Calculate risk level per script
-  - [ ] Aggregate script risks
-  - [ ] Apply weight (-30 points)
-  - [ ] Generate detailed risk report
-- [ ] **2.1.4** Unit tests for script detection
-  - [ ] Test various script patterns
-  - [ ] Test obfuscation detection
-  - [ ] Test false positive scenarios
-  - [ ] Test edge cases
+- [x] **2.1.1** External command detection
+  - [x] Detect curl/wget/http calls in scripts
+  - [x] Detect wget usage
+  - [x] Detect other network tools (nc, telnet, etc.)
+  - [x] Pattern matching for suspicious commands
+- [x] **2.1.2** Script analysis engine
+  - [x] Parse shell script syntax
+  - [x] Detect command chaining
+  - [x] Identify obfuscation attempts
+  - [x] Flag base64 encoded commands
+- [x] **2.1.3** Risk scoring for scripts
+  - [x] Calculate risk level per script
+  - [x] Aggregate script risks
+  - [x] Apply weight (-30 points)
+  - [x] Generate detailed risk report
+- [x] **2.1.4** Unit tests for script detection
+  - [x] Test various script patterns
+  - [x] Test obfuscation detection
+  - [x] Test false positive scenarios
+  - [x] Test edge cases
 
 #### Task 2.2: External Network Call Detection
 - [ ] **2.2.1** Static code analysis setup
@@ -771,7 +771,7 @@ We welcome contributions from the community! This project aims to set a world-cl
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/npm-security-score.git
+   git clone git@github.com:01tek/npm-security-score.git
    cd npm-security-score
    ```
 

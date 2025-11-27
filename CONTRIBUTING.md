@@ -26,12 +26,12 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 1. **Fork the repository**
 2. **Clone your fork**
    ```bash
-   git clone https://github.com/your-username/npm-security-score.git
+   git clone git@github.com:your-username/npm-security-score.git
    cd npm-security-score
    ```
 3. **Set up upstream remote**
    ```bash
-   git remote add upstream https://github.com/your-org/npm-security-score.git
+   git remote add upstream git@github.com:01tek/npm-security-score.git
    ```
 4. **Create a branch**
    ```bash

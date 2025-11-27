@@ -6,7 +6,7 @@ Welcome to npm-security-score! This guide will help you get started contributing
 
 1. **Fork and clone**
    ```bash
-   git clone https://github.com/your-username/npm-security-score.git
+   git clone git@github.com:your-username/npm-security-score.git
    cd npm-security-score
    ```
 
@@ -31,7 +31,7 @@ Welcome to npm-security-score! This guide will help you get started contributing
 
 ### Option 2: Fix a Bug
 
-1. Check [Issues](https://github.com/your-org/npm-security-score/issues)
+1. Check [Issues](https://github.com/01tek/npm-security-score/issues)
 2. Look for `good first issue` label
 3. Comment to claim it
 4. Create a branch and fix it

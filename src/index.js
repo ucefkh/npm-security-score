@@ -7,6 +7,9 @@ const ScoreCalculator = require('./core/ScoreCalculator');
 const RuleRegistry = require('./core/RuleRegistry');
 const BaseRule = require('./core/BaseRule');
 const { getScoreBand, shouldBlock, getScoreInterpretation } = require('./core/scoreBands');
+
+// Security Rules
+const LifecycleScriptRiskRule = require('./rules/LifecycleScriptRiskRule');
 const NpmRegistryClient = require('./api/NpmRegistryClient');
 const PackageAnalyzer = require('./utils/packageAnalyzer');
 const TarballAnalyzer = require('./utils/tarballAnalyzer');
@@ -28,6 +31,8 @@ module.exports = {
   PackageAnalyzer,
   TarballAnalyzer,
   config,
+  // Security Rules
+  LifecycleScriptRiskRule,
   // Version
   version: require('../package.json').version,
 };
